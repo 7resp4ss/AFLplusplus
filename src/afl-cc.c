@@ -13,6 +13,16 @@
 
      https://www.apache.org/licenses/LICENSE-2.0
 
+   这个文件主要处理的逻辑是：
+   1、根据环境变量进行一系列的处理
+   2、对gcc进行封装，加上大量的编译参数
+
+   我们可以使用以下命令进行查看
+   '''
+	afl-gcc --verbose hello.c -o hello
+   '''
+   
+
  */
 
 #define AFL_MAIN
@@ -1507,9 +1517,10 @@ int main(int argc, char **argv, char **envp) {
   int   i;
   char *callname = argv[0], *ptr = NULL;
 
-  if (getenv("AFL_DEBUG")) {
+  if (getenv("AFL_DEBUG")) {	//如果AFL_DEBUG环境变量存在
 
     debug = 1;
+	//如果没有检测到AFL_DEBUG这个环境变量，就删除环境这个变量
     if (strcmp(getenv("AFL_DEBUG"), "0") == 0) unsetenv("AFL_DEBUG");
 
   } else if (getenv("AFL_QUIET"))
@@ -1527,11 +1538,11 @@ int main(int argc, char **argv, char **envp) {
   if (getenv("AFL_PASSTHROUGH") || getenv("AFL_NOOPT")) {
 
     passthrough = 1;
-    if (!debug) { be_quiet = 1; }
+    if (!debug) { be_quiet = 1; }	//如果是debug模式，那么不输出详细信息
 
   }
 
-  if ((ptr = strrchr(callname, '/')) != NULL) callname = ptr + 1;
+  if ((ptr = strrchr(callname, '/')) != NULL) callname = ptr + 1;	//找到 '\' 的下一个字符
   argvnull = (u8 *)argv[0];
   check_environment_vars(envp);
 
@@ -1610,7 +1621,7 @@ int main(int argc, char **argv, char **envp) {
 
     if (compiler_mode) {
 
-      if (!be_quiet) {
+      if (!be_quiet) {	//如果开了debug模式
 
         WARNF(
             "\"AFL_CC_COMPILER\" is set but a specific compiler was already "
@@ -2335,7 +2346,7 @@ int main(int argc, char **argv, char **envp) {
 
 #ifdef USEMMAP
   #if !defined(__HAIKU__)
-    SAYF("Compiled with shm_open support.\n");
+    SAYF("Compiled with shm_open support .\n");
   #else
     SAYF("Compiled with shm_open support (adds -lrt when linking).\n");
   #endif
@@ -2541,6 +2552,7 @@ int main(int argc, char **argv, char **envp) {
   ck_free(ptr);
 #endif
 
+	//在以下这个函数对gcc进行封装
   edit_params(argc, argv, envp);
 
   if (debug) {
@@ -2554,6 +2566,7 @@ int main(int argc, char **argv, char **envp) {
 
   }
 
+	//在以下函数进行执行afl-cc操作
   if (passthrough) {
 
     argv[0] = cc_params[0];

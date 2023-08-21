@@ -1,3 +1,17 @@
+# 写在前面
+
+在学校上无聊的3周云计算实习培训课让我坐立难安，由于座位原因又不好狠狠地学考研，没办法，闲的在来分析一手afl++。
+
+由于大多数都是课上抽时间分析，所以可能没什么有意思的东西，懂哥勿喷，我对自己的水平还是有点`acdef`数的（骄傲）！
+
+分析的md文档放在分析的源码文件夹下，当前以及完成的部分：
+
++ /src:
+  + /afl-cc.c：完成了基本的分析
+  + /afl-as.c：完成了基本的分析，main_payload与llvm_payload待填坑
+
+
+
 # American Fuzzy Lop plus plus (AFL++)
 
 <img align="right" src="https://raw.githubusercontent.com/AFLplusplus/Website/main/static/aflpp_bg.svg" alt="AFL++ logo" width="250" heigh="250">
